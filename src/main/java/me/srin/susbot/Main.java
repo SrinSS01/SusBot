@@ -30,7 +30,7 @@ public class Main {
     static final MongoCollection<Document> suspoints = sustem.getCollection("suspoints");
 
     public static void main(String[] args) throws LoginException, InterruptedException {
-        String token = "OTcyNTI5MDM2NDY1MTcyNTkw.GAhuua.KFpfaok336np6oB9ni4xWOHkNnHRMfzIJXVVNU";
+        String token = System.getenv("TOKEN");
         var jda = JDABuilder.createDefault(
                         token,
                         GUILD_MESSAGES,

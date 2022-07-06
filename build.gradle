@@ -1,0 +1,44 @@
+//file:noinspection VulnerableLibrariesLocal
+plugins {
+    id 'java'
+    id 'application'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+group 'me.srin.susbot'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        name 'm2-dv8tion'
+        url 'https://m2.dv8tion.net/releases'
+    }
+}
+
+dependencies {
+    implementation 'net.dv8tion:JDA:4.4.0_352'
+//    implementation 'mysql:mysql-connector-java:8.0.29'
+    implementation 'org.mongodb:mongo-java-driver:3.12.11'
+//    implementation 'com.mchange:c3p0:0.9.5.5'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.36'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
+application {
+    mainClassName = 'me.srin.susbot.Main'
+}
+
+shadowJar {
+    archiveFileName.set('SusBot.jar')
+}
+task stage(dependsOn: ['build', 'shadowJar', 'clean', 'test'])
+build.mustRunAfter(clean)
+build.mustRunAfter(test)

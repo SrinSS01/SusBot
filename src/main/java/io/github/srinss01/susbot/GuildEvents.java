@@ -16,14 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.regex.Pattern;
-
 @Component
 @AllArgsConstructor
-public class Events extends ListenerAdapter {
+public class GuildEvents extends ListenerAdapter {
     SusPointsRepo repo;
-    private static final Logger LOGGER = LoggerFactory.getLogger(Events.class);
-    private static final Pattern SUSSY_PATTERN = Pattern.compile("sus|su|sussy|baka", Pattern.CASE_INSENSITIVE);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuildEvents.class);
 
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {

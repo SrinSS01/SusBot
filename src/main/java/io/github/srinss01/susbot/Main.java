@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import java.util.Scanner;
@@ -16,6 +17,12 @@ import java.util.Scanner;
 import static net.dv8tion.jda.api.requests.GatewayIntent.*;
 
 @Component
+@ComponentScan(
+        basePackageClasses = {
+            GuildEvents.class, MessageSentEvent.class
+        },
+        basePackages = "io.github.srinss01.susbot"
+)
 public class Main implements CommandLineRunner {
     @Value("${token}")
     String token;
@@ -56,7 +63,7 @@ public class Main implements CommandLineRunner {
             while (scanner.hasNext()) {
                 String command = scanner.nextLine();
                 if (command.equals("exit")) {
-                    jda.shutdownNow();
+                    jda.shutdown();
                     break;
                 }
             }

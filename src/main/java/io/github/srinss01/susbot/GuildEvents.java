@@ -14,9 +14,11 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 @Component
+@ComponentScan(basePackageClasses = { SusPointsRepo.class }, basePackages = "io.github.srinss01.susbot")
 @AllArgsConstructor
 public class GuildEvents extends ListenerAdapter {
     SusPointsRepo repo;

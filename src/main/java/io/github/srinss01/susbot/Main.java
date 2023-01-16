@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import java.util.Scanner;
@@ -17,21 +16,17 @@ import java.util.Scanner;
 import static net.dv8tion.jda.api.requests.GatewayIntent.*;
 
 @Component
-@ComponentScan(
-        basePackageClasses = {
-            GuildEvents.class, MessageSentEvent.class
-        },
-        basePackages = "io.github.srinss01.susbot"
-)
 public class Main implements CommandLineRunner {
-    @Value("${token}")
+    @Value("${botToken}")
     String token;
     GuildEvents guildEvents;
     MessageSentEvent messageSentEvent;
+    ButtonEvent buttonEvent;
 
-    public Main(GuildEvents guildEvents, MessageSentEvent messageSentEvent) {
+    public Main(GuildEvents guildEvents, MessageSentEvent messageSentEvent, ButtonEvent buttonEvent) {
         this.guildEvents = guildEvents;
         this.messageSentEvent = messageSentEvent;
+        this.buttonEvent = buttonEvent;
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
@@ -54,7 +49,7 @@ public class Main implements CommandLineRunner {
                         CacheFlag.STICKER,
                         CacheFlag.VOICE_STATE
                 )
-                .addEventListeners(guildEvents, messageSentEvent)
+                .addEventListeners(guildEvents, messageSentEvent, buttonEvent)
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("amongus"))
                 .build();

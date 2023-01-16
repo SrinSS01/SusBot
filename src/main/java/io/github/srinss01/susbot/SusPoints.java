@@ -1,25 +1,33 @@
 package io.github.srinss01.susbot;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
+import lombok.*;
 
-@Document("suspoints")
+import java.io.Serializable;
+
+@Entity
+@Table(name = "users")
+@IdClass(SusPoints.ID.class)
 @Getter @Setter
+@ToString
 public class SusPoints {
     @Id
-    ID id;
+    private long userId;
+    @Id private long guildId;
     String tag;
-    int sus_points;
+    int susPoints;
     long lastCommandTime;
 
     @NoArgsConstructor
     @AllArgsConstructor(staticName = "of")
-    static class ID {
-        long userId;
-        long guildId;
+    @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+    @ToString
+    @Getter
+    static class ID implements Serializable {
+        private long userId;
+        private long guildId;
     }
 }

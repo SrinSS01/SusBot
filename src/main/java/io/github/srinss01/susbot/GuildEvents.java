@@ -14,11 +14,9 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 @Component
-@ComponentScan(basePackageClasses = { SusPointsRepo.class }, basePackages = "io.github.srinss01.susbot")
 @AllArgsConstructor
 public class GuildEvents extends ListenerAdapter {
     SusPointsRepo repo;
@@ -52,8 +50,9 @@ public class GuildEvents extends ListenerAdapter {
         val memberOptional = repo.findById(id);
         if (memberOptional.isEmpty()) {
             val entity = new SusPoints();
-            entity.setId(id);
-            entity.setSus_points(0);
+            entity.setGuildId(id.getGuildId());
+            entity.setUserId(id.getUserId());
+            entity.setSusPoints(0);
             val tag = member.getUser().getAsTag();
             entity.setTag(tag);
             entity.setLastCommandTime(0);

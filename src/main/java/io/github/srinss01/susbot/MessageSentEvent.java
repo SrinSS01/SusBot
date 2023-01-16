@@ -1,29 +1,44 @@
 package io.github.srinss01.susbot;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.AllArgsConstructor;
 import lombok.val;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.springframework.context.annotation.ComponentScan;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.utils.FileUpload;
+import okhttp3.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-@ComponentScan(basePackageClasses = { SusPointsRepo.class }, basePackages = "io.github.srinss01.susbot")
 @AllArgsConstructor
 public class MessageSentEvent extends ListenerAdapter {
     SusPointsRepo repo;
     private static final Pattern SUSSY_PATTERN = Pattern.compile("sus|su|sussy|baka", Pattern.CASE_INSENSITIVE);
     private static final Random RANDOM = new Random();
     private static final String SUS_EMOTES = "<a:susrainbow:981399317703163954> <a:sustwerk:981399316935630960>";
+    static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    static final HashMap<Long, Page<Points>> PAGEABLE_HASH_MAP = new HashMap<>();
+
+    static final OkHttpClient client = new OkHttpClient().newBuilder().build();
+    static final MediaType mediaType = MediaType.parse("application/json");
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
@@ -107,14 +122,54 @@ public class MessageSentEvent extends ListenerAdapter {
                     }
                 }
             }
-            case "leaderboard" -> event.reply("under maintenance").setEphemeral(true).queue();
+            case "leaderboard" -> event.deferReply().queue(hook -> {
+                val users = repo.findByGuildIdOrderBySusPointsDescTagAsc(guildIdLong, Pageable.ofSize(10));
+                val content = users.getContent();
+                val object = new PointsObject(
+                        1,
+                        content
+                );
+                val json = GSON.toJson(object);
+                System.out.println(json);
+                RequestBody body = RequestBody.create(json, mediaType);
+                Request request = new Request.Builder()
+                        .url("https://susbot-next-app.vercel.app/api/og")
+                        .method("POST", body)
+                        .addHeader("Content-Type", "application/json")
+                        .build();
+                String fileName = "leaderboard" + System.currentTimeMillis() + ".png";
+                try (
+                        Response response = client.newCall(request).execute()
+                ) {
+                    val responseBody = response.body();
+                    if (responseBody == null) {
+                        return;
+                    }
+                    hook.sendMessageEmbeds(
+                            new EmbedBuilder()
+                                    .setImage("attachment://" + fileName).build()
+                    ).addFiles(FileUpload.fromData(responseBody.bytes(), fileName))
+                    .addActionRow(
+                            Button.primary("prev", "prev"),
+                            Button.primary("number", "1").asDisabled(),
+                            Button.primary("next", "next")
+                    ).queue(message -> {
+                        PAGEABLE_HASH_MAP.put(message.getIdLong(), users);
+                        message.editMessageComponents(ActionRow.of(
+                                Button.primary("prev", "prev").asDisabled(),
+                                Button.primary("number", "1").asDisabled(),
+                                Button.primary("next", "next").asDisabled()
+                        )).queueAfter(1, TimeUnit.MINUTES, msg -> PAGEABLE_HASH_MAP.remove(msg.getIdLong()));
+                    });
+                } catch (IOException ignored) {}
+            });
         }
     }
 
     private int sus(SusPoints theOneWhoSussed, SusPoints victim) {
         val incrementValue = getIncrementValue();
         theOneWhoSussed.setLastCommandTime(System.currentTimeMillis());
-        victim.setSus_points(victim.getSus_points() + incrementValue);
+        victim.setSusPoints(victim.getSusPoints() + incrementValue);
         repo.save(theOneWhoSussed);
         repo.save(victim);
         return incrementValue;

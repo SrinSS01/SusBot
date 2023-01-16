@@ -1,0 +1,27 @@
+#spring.data.mongodb.uri=mongodb+srv://srin:ynmIyXCLcb4dY6tx@bootssusbot.uivmy.mongodb.net/sustem?retryWrites=true&w=majority
+#spring.data.mongodb.database=sustem
+botToken:
+
+database:
+  host: "localhost:3306"
+  name: "progs"
+  user: "srin"
+  password: "1054"
+
+spring:
+  datasource:
+    hikari:
+      username: "${database.user}"
+      password: "${database.password}"
+      driver-class-name: "com.mysql.cj.jdbc.Driver"
+      auto-commit: true
+      connection-test-query: select 1
+      maximum-pool-size: 20
+    url: "jdbc:mysql://${database.host}/${database.name}"
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true

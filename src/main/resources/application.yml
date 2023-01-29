@@ -1,6 +1,6 @@
 #spring.data.mongodb.uri=mongodb+srv://srin:ynmIyXCLcb4dY6tx@bootssusbot.uivmy.mongodb.net/sustem?retryWrites=true&w=majority
 #spring.data.mongodb.database=sustem
-botToken: MTA1ODczOTQ1MTIxMzQwMjIwNA.GpOhst.GYsN7MS9gdY_5VVcqy9oM-ESHlFC8PFkCMY7_Y
+botToken:
 
 spring:
   h2:

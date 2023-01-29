@@ -1,27 +1,23 @@
 #spring.data.mongodb.uri=mongodb+srv://srin:ynmIyXCLcb4dY6tx@bootssusbot.uivmy.mongodb.net/sustem?retryWrites=true&w=majority
 #spring.data.mongodb.database=sustem
-botToken:
-
-database:
-  host: "localhost:3306"
-  name: "progs"
-  user: "srin"
-  password: "1054"
+botToken: MTA1ODczOTQ1MTIxMzQwMjIwNA.GpOhst.GYsN7MS9gdY_5VVcqy9oM-ESHlFC8PFkCMY7_Y
 
 spring:
+  h2:
+    console.enabled: true
   datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:./users
+    username: sa
+    password: password
     hikari:
-      username: "${database.user}"
-      password: "${database.password}"
-      driver-class-name: "com.mysql.cj.jdbc.Driver"
-      auto-commit: true
       connection-test-query: select 1
       maximum-pool-size: 20
-    url: "jdbc:mysql://${database.host}/${database.name}"
+      auto-commit: true
+      driver-class-name: org.h2.Driver
+      username: sa
+      password: password
   jpa:
-    properties:
-      hibernate:
-        format_sql: true
     hibernate:
       ddl-auto: update
-    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect

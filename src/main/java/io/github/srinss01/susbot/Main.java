@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.Scanner;
-
 import static net.dv8tion.jda.api.requests.GatewayIntent.*;
 
 @Component
@@ -30,10 +28,11 @@ public class Main implements CommandLineRunner {
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
     @Override
     public void run(String... args) {
         LOGGER.info("Token: {}", token);
-        var jda = JDABuilder.createDefault(
+        JDABuilder.createDefault(
                         token
                 ).enableIntents(
                         GUILD_PRESENCES,
@@ -53,15 +52,5 @@ public class Main implements CommandLineRunner {
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("amongus"))
                 .build();
-        new Thread(() -> {
-            Scanner scanner = new Scanner(System.in);
-            while (scanner.hasNext()) {
-                String command = scanner.nextLine();
-                if (command.equals("exit")) {
-                    jda.shutdown();
-                    break;
-                }
-            }
-        }, "console").start();
     }
 }

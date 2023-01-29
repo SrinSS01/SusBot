@@ -28,7 +28,8 @@ public class GuildEvents extends ListenerAdapter {
         guild.updateCommands().addCommands(
                 Commands.slash("sus", "grants a sus point to the user mentioned")
                         .addOption(OptionType.USER, "member", "mention the user to give sus points to", true),
-                Commands.slash("leaderboard", "shows sus leaderboard")
+                Commands.slash("leaderboard", "shows sus leaderboard"),
+                Commands.slash("stop", "stops the bot")
         ).queue();
         guild.getMembers().forEach(member -> insertMemberToGuild(guild, member));
     }

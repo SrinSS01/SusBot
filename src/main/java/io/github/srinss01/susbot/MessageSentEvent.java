@@ -87,6 +87,10 @@ public class MessageSentEvent extends ListenerAdapter {
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         val guildIdLong = Objects.requireNonNull(event.getGuild()).getIdLong();
         switch (event.getName()) {
+            case "stop" -> {
+                event.reply("shutting down...").setEphemeral(true).queue();
+                event.getJDA().shutdown();
+            }
             case "sus" -> {
                 val theOneWhoSussed = event.getUser().getIdLong();
                 val theOneWhoSussedOptional = repo.findById(SusPoints.ID.of(theOneWhoSussed, guildIdLong));
@@ -130,7 +134,6 @@ public class MessageSentEvent extends ListenerAdapter {
                         content
                 );
                 val json = GSON.toJson(object);
-                System.out.println(json);
                 RequestBody body = RequestBody.create(json, mediaType);
                 Request request = new Request.Builder()
                         .url("https://susbot-next-app.vercel.app/api/og")
